@@ -3,263 +3,805 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Натальная Карта — Оля</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>это тебе, Олечка ❤️</title>
     <style>
-        :root {
-            --gold: #d4af37;
-            --deep-purple: #0f0c29;
-            --mystic-blue: #302b63;
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: linear-gradient(to bottom, #050505, #0f0c29, #1b1b2f);
-            color: #e0e0e0;
-            font-family: 'Montserrat', sans-serif;
+            background-color: #0d060f;
+            color: #ffffff;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
 
-        h1, h2, h3 {
-            font-family: 'Cinzel', serif;
-            color: var(--gold);
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-        }
-
-        /* Звездный фон */
-        #stars-container {
+        /* Canvas Background for Floating Hearts */
+        #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 430px;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 30%, #3a1533 0%, #170a1c 60%, #0d060f 100%);
+            position: relative;
+            padding: 24px 18px 48px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            box-shadow: 0 0 50px rgba(229, 92, 148, 0.15);
+        }
+
+        /* SCREEN 1: ENVELOPE */
+        #screen-envelope {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 90vh;
+            text-align: center;
+        }
+
+        .title-text {
+            font-family: 'Caveat', cursive;
+            font-size: 38px;
+            color: #f7c5dd;
+            margin-bottom: 35px;
+            line-height: 1.2;
+            text-shadow: 0 0 15px rgba(247, 197, 221, 0.4);
+            animation: floatHeader 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatHeader {
+            from { transform: translateY(0); }
+            to { transform: translateY(-6px); }
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 290px;
+            height: 200px;
+            cursor: pointer;
+            perspective: 1000px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.03);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .envelope {
+            width: 100%;
+            height: 100%;
+            background: #fdf8f3;
+            border-radius: 16px;
+            position: relative;
+            border: 1px solid #e2d5c8;
+            overflow: visible;
+        }
+
+        .envelope-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fbf4ed 0%, #efe2d3 100%);
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .envelope-body::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 145px solid #ebdcd0;
+            border-bottom: 110px solid #ebdcd0;
+            border-top: 90px solid transparent;
+            z-index: 2;
+        }
+
+        .envelope-body::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-right: 145px solid #e4d3c5;
+            border-bottom: 110px solid #e4d3c5;
+            border-top: 90px solid transparent;
+            z-index: 2;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 145px solid transparent;
+            border-right: 145px solid transparent;
+            border-top: 115px solid #f2e3d5;
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 4;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-seal {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            background: radial-gradient(circle, #ce3b66 0%, #9e1f43 100%);
+            border-radius: 50%;
+            top: 86px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(158, 31, 67, 0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .envelope-name {
+            position: absolute;
+            bottom: 35px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Caveat', cursive;
+            font-size: 30px;
+            color: #4a342a;
+            z-index: 3;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .envelope-stamp {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 38px;
+            height: 38px;
+            border: 2px dashed #bba899;
+            border-radius: 50%;
+            z-index: 3;
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .hint-text {
+            font-family: 'Caveat', cursive;
+            font-size: 24px;
+            color: #d1b2c4;
+            letter-spacing: 0.5px;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        /* SCREEN 2: LETTER */
+        #screen-letter {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .letter-card {
+            background-color: #fdfbf7;
+            color: #2b221e;
+            width: 100%;
+            border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 100px rgba(245, 235, 224, 0.5);
+            margin-bottom: 24px;
+            position: relative;
+            border: 1px solid #ebdcd0;
+        }
+
+        .letter-card::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px dashed rgba(180, 150, 130, 0.25);
+            border-radius: 14px;
             pointer-events: none;
         }
 
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: twinkle var(--duration) infinite ease-in-out;
+        .letter-header {
+            font-family: 'Caveat', cursive;
+            font-size: 30px;
+            color: #c83d66;
+            margin-bottom: 18px;
+            font-weight: 700;
         }
 
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
+        .letter-text {
+            font-family: 'Caveat', cursive;
+            font-size: 24px;
+            line-height: 1.45;
+            color: #3d302a;
+            margin-bottom: 25px;
         }
 
-        /* Декоративные элементы */
-        .mystic-border {
-            border: 1px solid var(--gold);
-            position: relative;
-            padding: 2rem;
-            background: rgba(15, 12, 41, 0.7);
-            backdrop-filter: blur(10px);
+        /* POLAROID PHOTO CARDS */
+        .photo-card {
+            background: #ffffff;
+            padding: 12px 12px 18px 12px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12), 0 2px 5px rgba(0,0,0,0.08);
+            margin-bottom: 22px;
+            text-align: center;
+            transform: rotate(-1deg);
+            transition: transform 0.3s ease;
+        }
+
+        .photo-card:nth-child(even) {
+            transform: rotate(1.5deg);
+        }
+
+        .photo-card:hover {
+            transform: scale(1.02) rotate(0deg);
+        }
+
+        .photo-frame {
+            width: 100%;
             border-radius: 8px;
+            overflow: hidden;
+            background: #faf4f0;
+            margin-bottom: 12px;
         }
 
-        .mystic-border::before {
-            content: '✧';
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #0f0c29;
-            padding: 0 10px;
-            color: var(--gold);
-            font-size: 1.5rem;
-        }
-
-        .planet-card {
-            transition: all 0.3s ease;
-            border-left: 3px solid var(--gold);
-        }
-
-        .planet-card:hover {
-            transform: translateX(10px);
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        .zodiac-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .glow-text {
-            color: var(--gold);
+        .photo-caption {
+            font-family: 'Caveat', cursive;
+            font-size: 22px;
+            color: #483932;
             font-weight: 600;
         }
 
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
+        .signature {
+            text-align: right;
+            font-family: 'Caveat', cursive;
+            font-size: 26px;
+            color: #ead1dc;
+            margin-top: 5px;
+            margin-bottom: 28px;
+            width: 100%;
+            padding-right: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        .scroll-reveal.visible {
+        /* ACTION BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            flex: 2;
+            background: linear-gradient(135deg, #f05380 0%, #c82d58 100%);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 30px;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px rgba(240, 83, 128, 0.4);
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(240, 83, 128, 0.6);
+            background: linear-gradient(135deg, #f7628d 0%, #d83461 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.12);
+            color: #f3dbe6;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 14px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* SCREEN 3: OPTIONS */
+        #screen-options {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .options-title {
+            font-family: 'Caveat', cursive;
+            font-size: 38px;
+            color: #fce4ec;
+            margin-top: 15px;
+            margin-bottom: 28px;
+            text-align: center;
+            text-shadow: 0 0 12px rgba(252, 228, 236, 0.3);
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 20px;
+            padding: 20px 22px;
+            width: 100%;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: linear-gradient(to bottom, #ff80ab, #c82d58);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: translateY(-3px) scale(1.01);
+            border-color: rgba(255, 128, 171, 0.4);
+            box-shadow: 0 8px 25px rgba(229, 92, 148, 0.25);
+        }
+
+        .option-card:hover::before {
             opacity: 1;
-            transform: translateY(0);
+        }
+
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 19px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .option-icon {
+            font-size: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .option-desc {
+            font-size: 14px;
+            color: #d1becc;
+            padding-left: 36px;
+            line-height: 1.4;
+        }
+
+        /* SCREEN 4: SUCCESS */
+        #screen-success {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 80vh;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .success-title {
+            font-family: 'Caveat', cursive;
+            font-size: 46px;
+            color: #f8bbd0;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(248, 187, 208, 0.5);
+        }
+
+        .selected-box {
+            background: rgba(255, 255, 255, 0.09);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .btn-action {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            padding: 16px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-2px);
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 99;
         }
     </style>
 </head>
 <body>
 
-    <div id="stars-container"></div>
+    <canvas id="bg-canvas"></canvas>
+    <canvas id="confetti-canvas"></canvas>
 
-    <!-- Hero Section -->
-    <header class="min-h-screen flex flex-col items-center justify-center text-center p-6">
-        <div class="mb-8 animate-pulse">
-            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 5L55 45L95 50L55 55L50 95L45 55L5 50L45 45L5 5Z" fill="#d4af37"/>
-            </svg>
+    <div class="container">
+        <!-- Screen 1: Envelope -->
+        <div id="screen-envelope">
+            <div class="title-text">Олечка,<br>это тебе</div>
+            <div class="envelope-wrapper" onclick="openEnvelope()">
+                <div class="envelope" id="envelope">
+                    <div class="envelope-flap"></div>
+                    <div class="envelope-seal" id="seal">❤️</div>
+                    <div class="envelope-body">
+                        <div class="envelope-stamp">🕊️</div>
+                        <div class="envelope-name">Олечка</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hint-text" id="hint-text">✨ нажми на конверт ✨</div>
         </div>
-        <h1 class="text-4xl md:text-6xl mb-4 uppercase tracking-widest">Космический Паспорт</h1>
-        <p class="text-xl md:text-2xl italic text-gray-400 mb-2">Для души по имени Оля</p>
-        <p class="text-sm tracking-widest text-gold opacity-80">15 МАЯ 2002 • 10:25 • ОНЕГА</p>
-        
-        <div class="mt-12">
-            <a href="#content" class="px-8 py-3 border border-gold text-gold hover:bg-gold hover:text-black transition duration-300 rounded-full text-sm uppercase tracking-widest">Открыть тайны</a>
+
+        <!-- Screen 2: Letter Content -->
+        <div id="screen-letter">
+            <div class="letter-card">
+                <div class="letter-header">это тебе, Олечка</div>
+                <div class="letter-text">
+                    Любимая Олечка! Сегодня наш небольшой, но такой важный праздник — наша очередная месяцщина! Даже несмотря на то, что мы иногда можем поиздорить, всё время рядом с тобой подарило столько тепла, улыбок и уютных моментов.<br><br>
+                    Спасибо тебе за твою улыбку, поддержку и за то, с какой легкостью ты украшаешь каждый день. С тобой мне всегда комфортно, тепло и радостно. Извини меня за мой сложный характер и вспыльчивость... Я тебя очень люблю!
+                </div>
+
+                <!-- Photo 1: Gingerbread Heart -->
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <svg width="100%" height="230" viewBox="0 0 300 230" style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);">
+                            <!-- Background Decor -->
+                            <circle cx="150" cy="115" r="95" fill="none" stroke="#f48fb1" stroke-width="2" stroke-dasharray="6,6"/>
+                            <!-- Gingerbread Heart -->
+                            <path d="M150,185 C150,185 65,135 65,82 C65,50 90,30 118,30 C136,30 150,45 150,45 C150,45 164,30 182,30 C210,30 235,50 235,82 C235,135 150,185 150,185 Z" fill="#b06d44" stroke="#8d512a" stroke-width="4"/>
+                            <!-- Icing Pattern -->
+                            <path d="M150,175 C150,175 75,128 75,82 C75,56 96,38 118,38 C133,38 144,50 150,50 C156,50 167,38 182,38 C204,38 225,56 225,82 C225,128 150,175 150,175 Z" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-dasharray="8,6"/>
+                            <!-- Name in icing -->
+                            <text x="150" y="100" fill="#ffffff" font-family="Caveat, cursive" font-size="34" font-weight="bold" text-anchor="middle" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.2))">Оля</text>
+                            <!-- Decorative Icing Dots -->
+                            <circle cx="150" cy="120" r="3" fill="#fff"/>
+                            <circle cx="138" cy="120" r="3" fill="#fff"/>
+                            <circle cx="162" cy="120" r="3" fill="#fff"/>
+                        </svg>
+                    </div>
+                    <div class="photo-caption">Самых вкусных лакомств! 🍪</div>
+                </div>
+
+                <!-- Photo 2: Outfit / Dress -->
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <svg width="100%" height="270" viewBox="0 0 300 270" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);">
+                            <rect width="300" height="270" fill="none"/>
+                            <!-- Hanger -->
+                            <path d="M150,45 C150,35 160,30 155,20 C150,12 140,20 145,28 C148,33 150,38 150,45 L110,70 L190,70 Z" fill="none" stroke="#5d4037" stroke-width="3" stroke-linecap="round"/>
+                            <!-- Stylish Dress -->
+                            <path d="M130,70 L170,70 L180,105 L165,110 L195,220 L105,220 L135,110 L120,105 Z" fill="#1e88e5" stroke="#1565c0" stroke-width="2"/>
+                            <!-- Belt -->
+                            <rect x="132" y="105" width="36" height="8" rx="2" fill="#d81b60"/>
+                            <!-- Sparkles -->
+                            <path d="M70,80 L75,90 L85,95 L75,100 L70,110 L65,100 L55,95 L65,90 Z" fill="#fff" opacity="0.8"/>
+                            <path d="M230,140 L234,148 L242,152 L234,156 L230,164 L226,156 L218,152 L226,148 Z" fill="#fff" opacity="0.8"/>
+                        </svg>
+                    </div>
+                    <div class="photo-caption">Лучших образов! 👗</div>
+                </div>
+
+                <!-- Photo 3: Warm Embrace / Sculpture -->
+                <div class="photo-card">
+                    <div class="photo-frame">
+                        <svg width="100%" height="230" viewBox="0 0 300 230" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">
+                            <!-- Background Circles -->
+                            <circle cx="150" cy="115" r="80" fill="#a5d6a7" opacity="0.5"/>
+                            <!-- Hands holding heart sculpture concept -->
+                            <path d="M100,160 C100,120 120,90 150,90 C180,90 200,120 200,160 C200,185 180,200 150,200 C120,200 100,185 100,160 Z" fill="#ffffff" opacity="0.9" stroke="#81c784" stroke-width="3"/>
+                            <!-- Heart inside -->
+                            <path d="M150,145 C150,145 130,125 130,112 C130,102 138,96 146,96 C151,96 150,101 150,101 C150,101 149,96 154,96 C162,96 170,102 170,112 C170,125 150,145 150,145 Z" fill="#e91e63"/>
+                        </svg>
+                    </div>
+                    <div class="photo-caption">Крепких объятий! 🫂</div>
+                </div>
+            </div>
+
+            <div class="signature">твой муж ❤️</div>
+
+            <div class="btn-group">
+                <button class="btn-primary" onclick="showOptions()">И я тебя люблю!</button>
+                <button class="btn-secondary" onclick="alert('Эй, такой вариант не принимается! 😉❤️')">Не смогу</button>
+            </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main id="content" class="max-w-4xl mx-auto px-6 py-20">
-        
-        <!-- Summary Section -->
-        <section class="mb-20 scroll-reveal">
-            <div class="mystic-border">
-                <h2 class="text-3xl mb-6 text-center">Общая Энергетика</h2>
-                <p class="leading-relaxed text-lg mb-4 text-gray-300">
-                    Оля, твой гороскоп представляет собой гармоничное сочетание <span class="glow-text">Земной стабильности</span> и <span class="glow-text">Эмоциональной глубины</span>. Ты родилась под знаком Тельца, что дает тебе огромную внутреннюю силу и умение ценить красоту жизни. Однако положение твоих планет в домах указывает на то, что твой путь тесно связан с самопознанием и социальным признанием.
-                </p>
+        <!-- Screen 3: Interactive Options Screen -->
+        <div id="screen-options">
+            <div class="options-title">Что будем делать?</div>
+
+            <div class="option-card" onclick="selectOption('Прогулка на закате', 'Только на закате теперь и можем гулять...')">
+                <div class="option-header">
+                    <span class="option-icon">✨</span>
+                    <span>Прогулка на закате</span>
+                </div>
+                <div class="option-desc">Только на закате теперь и можем гулять...</div>
             </div>
-        </section>
 
-        <!-- Big Three -->
-        <section class="mb-20 scroll-reveal">
-            <h2 class="text-3xl mb-10 text-center uppercase tracking-wider">Три Оснопа Китая</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Sun -->
-                <div class="p-6 bg-black bg-opacity-40 border border-gray-800 rounded-lg text-center">
-                    <span class="zodiac-icon">☀️</span>
-                    <h3 class="text-xl mb-2">Солнце в Тельце</h3>
-                    <p class="text-sm text-gray-400 italic mb-3">Твоё Я, твоя суть</p>
-                    <p class="text-xs leading-relaxed text-gray-300">Надежность, терпение, любовь к комфорту. Ты человек дела, который умеет доводить начатое до конца и окружать себя качественными вещами.</p>
+            <div class="option-card" onclick="selectOption('Смотрим фильмы про мажора', 'Так и не посмотрели!')">
+                <div class="option-header">
+                    <span class="option-icon">🧐</span>
+                    <span>Смотрим фильмы про мажора</span>
                 </div>
-                <!-- Moon -->
-                <div class="p-6 bg-black bg-opacity-40 border border-gray-800 rounded-lg text-center">
-                    <span class="zodiac-icon">🌙</span>
-                    <h3 class="text-xl mb-2">Луна в Раке</h3>
-                    <p class="text-sm text-gray-400 italic mb-3">Твои эмоции, душа</p>
-                    <p class="text-xs leading-relaxed text-gray-300">Невероятная интуиция и чувствительность. Ты находишься в "обители" - Луна здесь очень сильна. Дом и семья — твой главный источник силы.</p>
-                </div>
-                <!-- Ascendant -->
-                <div class="p-6 bg-black bg-opacity-40 border border-gray-800 rounded-lg text-center">
-                    <span class="zodiac-icon">🏹</span>
-                    <h3 class="text-xl mb-2">Асцендент в Льве</h3>
-                    <p class="text-sm text-gray-400 italic mb-3">Маска, первое впечатление</p>
-                    <p class="text-xs leading-relaxed text-gray-300">Ты производишь впечатление яркого, уверенного в себе человека. Тебя невозможно не заметить, в тебе есть врожденная грация и достоинство.</p>
-                </div>
+                <div class="option-desc">Так и не посмотрели!</div>
             </div>
-        </section>
 
-        <!-- Planets Analysis -->
-        <section class="mb-20 scroll-reveal">
-            <h2 class="text-3xl mb-10 text-center">Расположение Планет</h2>
-            <div class="space-y-6">
-                
-                <div class="planet-card p-6 rounded-r-lg bg-gray-900 bg-opacity-30">
-                    <h3 class="text-xl mb-2">Меркурий в Близнецах ☿</h3>
-                    <p class="text-gray-300">Твой ум невероятно быстр. Меркурий в своей обители дает блестящие коммуникативные навыки. Ты легко усваиваешь информацию и обладаешь острым чувством юмора.</p>
+            <div class="option-card" onclick="selectOption('Идём шопиться к чуркестанам', 'Посмотрим ещё новый зонтик...')">
+                <div class="option-header">
+                    <span class="option-icon">🛍️</span>
+                    <span>Идём шопиться к чуркестанам</span>
                 </div>
-
-                <div class="planet-card p-6 rounded-r-lg bg-gray-900 bg-opacity-30">
-                    <h3 class="text-xl mb-2">Венера в Близнецах ♀</h3>
-                    <p class="text-gray-300">В любви и симпатиях тебе важен интеллект партнера. Тебе нравится легкое общение, флирт и разнообразие в чувствах. Скука — твой главный враг в отношениях.</p>
-                </div>
-
-                <div class="planet-card p-6 rounded-r-lg bg-gray-900 bg-opacity-30">
-                    <h3 class="text-xl mb-2">Марс в Близнецах ♂</h3>
-                    <p class="text-gray-300">Твоя энергия направлена в слово. Ты можешь "сражаться" аргументами. Многозадачность — твой конек, хотя иногда тебе сложно сфокусироваться на чем-то одном долгое время.</p>
-                </div>
-
-                <div class="planet-card p-6 rounded-r-lg bg-gray-900 bg-opacity-30">
-                    <h3 class="text-xl mb-2">Юпитер в Раке ♃</h3>
-                    <p class="text-gray-300">Планета удачи находится в экзальтации. Это один из лучших показателей. Твоё везение приходит через заботу о других, благотворительность и глубокое понимание человеческой психологии.</p>
-                </div>
-
+                <div class="option-desc">Посмотрим ещё новый зонтик...</div>
             </div>
-        </section>
 
-        <!-- Advice/Karmic Path -->
-        <section class="mb-20 scroll-reveal">
-            <div class="p-8 border-2 border-double border-gold rounded-xl bg-black bg-opacity-50">
-                <h2 class="text-2xl mb-6 text-center italic">Кармическая задача</h2>
-                <p class="text-center text-gray-300 leading-relaxed">
-                    Твои Узлы указывают на необходимость перехода от накопления материальных благ к духовному развитию. Твой путь — научиться доверять своей интуиции и не бояться перемен. Ты пришла в этот мир, чтобы стать опорой для других, сохраняя при этом свою внутреннюю независимость.
-                </p>
+            <div class="option-card" onclick="selectOption('Идём ко мне в гости', 'Вдруг у мамы новые сплетни')">
+                <div class="option-header">
+                    <span class="option-icon">🤗</span>
+                    <span>Идём ко мне в гости</span>
+                </div>
+                <div class="option-desc">Вдруг у мамы новые сплетни</div>
             </div>
-        </section>
+        </div>
 
-    </main>
+        <!-- Screen 4: Final Screen -->
+        <div id="screen-success">
+            <div class="success-title">Договорились. ❤️</div>
+            
+            <div class="selected-box" id="selected-result">
+                <!-- Selected option inserted dynamically -->
+            </div>
 
-    <footer class="text-center py-10 opacity-50 text-sm">
-        <p>© 2024 Звездный Оракул • Изготовлено специально для Оли</p>
-        <p class="mt-2">Пусть звезды освещают твой путь.</p>
-    </footer>
+            <button class="btn-action" onclick="triggerConfettiBurst()">Поделиться ⭕</button>
+            <button class="btn-action" onclick="triggerConfettiBurst()">Сохранить себе</button>
+            <button class="btn-action" style="background: transparent; border: none; font-size: 15px; opacity: 0.85; margin-top: 5px;">🕊️ Написать пару слов в ответ</button>
+        </div>
+    </div>
 
     <script>
-        // Создание звезд
-        const container = document.getElementById('stars-container');
-        const starCount = 200;
+        /* --- Background Animated Floating Hearts --- */
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let width = bgCanvas.width = window.innerWidth;
+        let height = bgCanvas.height = window.innerHeight;
 
-        for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            
-            const size = Math.random() * 3;
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            const duration = 2 + Math.random() * 5;
-            const delay = Math.random() * 5;
+        window.addEventListener('resize', () => {
+            width = bgCanvas.width = window.innerWidth;
+            height = bgCanvas.height = window.innerHeight;
+        });
 
-            star.style.width = `${size}px`;
-            star.style.height = `${size}px`;
-            star.style.left = `${posX}%`;
-            star.style.top = `${posY}%`;
-            star.style.setProperty('--duration', `${duration}s`);
-            star.style.animationDelay = `${delay}s`;
-
-            container.appendChild(star);
+        class FloatingHeart {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + 20;
+                this.size = Math.random() * 14 + 8;
+                this.speed = Math.random() * 1.2 + 0.5;
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.swing = Math.random() * 0.03;
+                this.swingAngle = Math.random() * Math.PI * 2;
+            }
+            update() {
+                this.y -= this.speed;
+                this.swingAngle += this.swing;
+                this.x += Math.sin(this.swingAngle) * 0.8;
+                if (this.y < -20) this.reset();
+            }
+            draw() {
+                bgCtx.save();
+                bgCtx.globalAlpha = this.opacity;
+                bgCtx.fillStyle = '#ff80ab';
+                bgCtx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                bgCtx.moveTo(this.x, this.y + topCurveHeight);
+                bgCtx.bezierCurveTo(this.x, this.y, this.x - this.size / 2, this.y, this.x - this.size / 2, this.y + topCurveHeight);
+                bgCtx.bezierCurveTo(this.x - this.size / 2, this.y + (this.size + topCurveHeight) / 2, this.x, this.y + this.size, this.x, this.y + this.size);
+                bgCtx.bezierCurveTo(this.x, this.y + this.size, this.x + this.size / 2, this.y + (this.size + topCurveHeight) / 2, this.x + this.size / 2, this.y + topCurveHeight);
+                bgCtx.bezierCurveTo(this.x + this.size / 2, this.y, this.x, this.y, this.x, this.y + topCurveHeight);
+                bgCtx.closePath();
+                bgCtx.fill();
+                bgCtx.restore();
+            }
         }
 
-        // Анимация при скролле
-        const observerOptions = {
-            threshold: 0.1
-        };
+        const bgHearts = Array.from({ length: 25 }, () => new FloatingHeart());
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+        function animateBg() {
+            bgCtx.clearRect(0, 0, width, height);
+            bgHearts.forEach(h => {
+                h.update();
+                h.draw();
             });
-        }, observerOptions);
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
 
-        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+        /* --- Page Navigation Functions --- */
+        function openEnvelope() {
+            const env = document.getElementById('envelope');
+            env.classList.add('open');
+            document.getElementById('seal').style.opacity = '0';
+            document.getElementById('seal').style.transform = 'translateX(-50%) scale(0)';
+            document.getElementById('hint-text').innerText = '✨ открываю... ✨';
+            
+            setTimeout(() => {
+                document.getElementById('screen-envelope').style.display = 'none';
+                document.getElementById('screen-letter').style.display = 'flex';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 1000);
+        }
 
-        // Плавный скролл
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+        function showOptions() {
+            document.getElementById('screen-letter').style.display = 'none';
+            document.getElementById('screen-options').style.display = 'flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectOption(title, desc) {
+            triggerConfettiBurst();
+            document.getElementById('screen-options').style.display = 'none';
+            document.getElementById('screen-success').style.display = 'flex';
+            
+            document.getElementById('selected-result').innerHTML = `
+                <div style="font-size: 24px; font-weight: 800; margin-bottom: 10px; color: #ffffff;">Гулять, так гулять!</div>
+                <div style="font-size: 20px; color: #f48fb1; margin-bottom: 8px; font-weight: 700;">✨ ${title}</div>
+                <div style="font-size: 15px; color: #d1becc; line-height: 1.4;">${desc}</div>
+            `;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* --- Confetti & Heart Burst Effect --- */
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const cCtx = confettiCanvas.getContext('2d');
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+
+        let particles = [];
+
+        function triggerConfettiBurst() {
+            particles = [];
+            const colors = ['#f48fb1', '#ff4081', '#ff80ab', '#ffffff', '#ffd54f', '#e1bee7'];
+            for (let i = 0; i < 90; i++) {
+                particles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 16,
+                    size: Math.random() * 9 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rSpeed: (Math.random() - 0.5) * 10,
+                    opacity: 1
                 });
+            }
+        }
+
+        function animateConfetti() {
+            cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.35; // gravity
+                p.rotation += p.rSpeed;
+                p.opacity -= 0.012;
+
+                if (p.opacity <= 0) {
+                    particles.splice(index, 1);
+                    return;
+                }
+
+                cCtx.save();
+                cCtx.globalAlpha = p.opacity;
+                cCtx.translate(p.x, p.y);
+                cCtx.rotate((p.rotation * Math.PI) / 180);
+                cCtx.fillStyle = p.color;
+                cCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                cCtx.restore();
             });
-        });
+            requestAnimationFrame(animateConfetti);
+        }
+        animateConfetti();
     </script>
 </body>
 </html>
